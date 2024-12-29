@@ -9,3 +9,8 @@ services:
         volumes:
             - '~/document/Nifi/shared-directory:/opt/nifi/nifi-current/ls-target'
         image: 'apache/nifi:1.24.0'
+        networks:
+            - big-data-network
+networks:
+    big-data-network:
+        driver: bridge
