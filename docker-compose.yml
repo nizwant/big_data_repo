@@ -1,7 +1,7 @@
-version: '3'
 services:
     nifi:
         container_name: nifi_test
+        hostname: nifi_test
         ports:
             - '8080:8080'
         environment:
