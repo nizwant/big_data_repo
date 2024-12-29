@@ -8,3 +8,6 @@ parquet brotli 35 KB
 parquet uncompressed 114 KB
 parquet lz4 63 KB
 parquet zstd 43 KB
+
+parsing date from string to datetime64 increases the size of the data by 1.3MB
+need to check it further
