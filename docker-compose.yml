@@ -11,6 +11,7 @@ services:
             - '8080:8080'
         networks:
             - big-data-network
+
     zookeeper:
         image: confluentinc/cp-zookeeper:7.4.4
         container_name: zookeeper_test
@@ -19,16 +20,16 @@ services:
             ZOOKEEPER_CLIENT_PORT: 2181
             ZOOKEEPER_TICK_TIME: 2000
         ports:
-            - 22181:2181
+            - '22181:2181'
         networks:
-            - bigdata-network
+            - big-data-network
 
     kafka:
         image: confluentinc/cp-kafka:7.4.4
         container_name: kafka_test
         hostname: kafka_test
         depends_on:
-            - zookeeper_test
+            - zookeeper
         environment:
             KAFKA_BROKER_ID: 1
             KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -37,9 +38,10 @@ services:
             KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
         ports:
-            - "9092:9092"
+            - '9092:9092'
         networks:
-            - bigdata-network
+            - big-data-network
+
 networks:
     big-data-network:
         driver: bridge
