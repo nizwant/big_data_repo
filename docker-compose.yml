@@ -13,38 +13,34 @@ services:
             - big-data-network
 
     zookeeper:
-        image: confluentinc/cp-zookeeper:7.4.4
+        image: wurstmeister/zookeeper:latest
         container_name: zookeeper_test
         hostname: zookeeper_test
         environment:
             ZOOKEEPER_CLIENT_PORT: 2181
             ZOOKEEPER_TICK_TIME: 2000
         ports:
-            - '22181:2181'
+            - '2181:2181'
         networks:
             - big-data-network
 
     kafka:
-        image: confluentinc/cp-kafka:7.4.4
+        image: wurstmeister/kafka:latestls 
         container_name: kafka_test
         hostname: kafka_test
         depends_on:
             - zookeeper
         environment:
-            KAFKA_BROKER_ID: 1
+            KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka_test:9093,OUTSIDE://localhost:9092
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+            KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+            KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
             KAFKA_ZOOKEEPER_CONNECT: zookeeper_test:2181
-            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_test:9092,PLAINTEXT_HOST://localhost:29092
-            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-            KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-            KAFKA_DEFAULT_REPLICATION_FACTOR: 1
-            KAFKA_LOG_RETENTION_POLICY: "compact"
-            KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-            CONFLUENT_TOPIC_REPLICATION_FACTOR: 1
-            KAFKA_CONFLUENT_TOPIC_REPLICATION_FACTOR: 1
+            KAFKA_CREATE_TOPICS: "my-topic:1:1"
         ports:
             - '9092:9092'
-            - '29092:29092'
+        expose:
+            - "9093"
         networks:
             - big-data-network
 
