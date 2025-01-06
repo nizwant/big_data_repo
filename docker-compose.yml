@@ -65,6 +65,16 @@ services:
             - big-data-network
         command: ["start-master.sh", "start-worker.sh", "spark://spark_test:7077"]
 
+    redis:
+        image: redis
+        container_name: redis_test
+        hostname: redis_test
+        ports:
+            - '6379:6379'
+        networks:
+            - big-data-network
+
+
 networks:
     big-data-network:
         driver: bridge
