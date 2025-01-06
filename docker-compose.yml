@@ -27,7 +27,7 @@ services:
             - big-data-network
 
     kafka:
-        image: wurstmeister/kafka:latestls 
+        image: wurstmeister/kafka:latest
         container_name: kafka_test
         hostname: kafka_test
         depends_on:
@@ -46,24 +46,56 @@ services:
         networks:
             - big-data-network
             
-    spark:
-        image: bitnami/spark:3.3.0
-        container_name: spark_test
-        hostname: spark_test
-        environment:
-            - SPARK_MODE=master    # Single-node, Spark in master mode
-            - SPARK_MASTER_URL=spark://spark_test:7077  # Local Spark master
-            - SPARK_DRIVER_MEMORY=2g
-            - SPARK_EXECUTOR_MEMORY=2g
-            - SPARK_EXECUTOR_CORES=2
+    # spark:
+    #     image: bitnami/spark:3.3.0
+    #     container_name: spark_test
+    #     hostname: spark_test
+    #     environment:
+    #         - SPARK_MODE=master    # Single-node, Spark in master mode
+    #         - SPARK_MASTER_URL=spark://spark_test:7077  # Local Spark master
+    #         - SPARK_DRIVER_MEMORY=2g
+    #         - SPARK_EXECUTOR_MEMORY=2g
+    #         - SPARK_EXECUTOR_CORES=2
+    #     ports:
+    #         - "4040:4040"   # Spark UI port for monitoring
+    #         - "7077:7077"   # Spark master port
+    #     volumes:
+    #         - ./spark:/opt/spark  # Local Spark directory for your code and configurations
+    #     networks:
+    #         - big-data-network
+    #     command: ["start-master.sh", "start-worker.sh", "spark://spark_test:7077"]
+
+    hdfs-namenode:
+        image: gradiant/hdfs-namenode
+        container_name: hdfs-namenode
+        hostname: hdfs-namenode
         ports:
-            - "4040:4040"   # Spark UI port for monitoring
-            - "7077:7077"   # Spark master port
-        volumes:
-            - ./spark:/opt/spark  # Local Spark directory for your code and configurations
+            - '50070:50070'  # NameNode web UI
+            - '8020:8020'    # HDFS RPC port
         networks:
             - big-data-network
-        command: ["start-master.sh", "start-worker.sh", "spark://spark_test:7077"]
+
+    hdfs-datanode1:
+        image: gradiant/hdfs-datanode
+        container_name: hdfs-datanode1
+        hostname: hdfs-datanode1
+        links:
+            - hdfs-namenode
+        environment:
+            - 'CORE_CONF_fs_defaultFS=hdfs://hdfs-namenode:8020'
+        networks:
+            - big-data-network
+
+    hdfs-datanode2:
+        image: gradiant/hdfs-datanode
+        container_name: hdfs-datanode2
+        hostname: hdfs-datanode2
+        links:
+            - hdfs-namenode
+        environment:
+            - 'CORE_CONF_fs_defaultFS=hdfs://hdfs-namenode:8020'
+        networks:
+            - big-data-network
 
     redis:
         image: redis
