@@ -7,9 +7,11 @@ services:
         hostname: nifi_bd
         environment:
             - NIFI_WEB_HTTP_PORT=8080
-        volumes:
-            - '~/document/Nifi/shared-directory:/opt/nifi/nifi-current/ls-target'
-            - './src/nifi:/tmp/files'
+            - SINGLE_USER_CREDENTIALS_USERNAME=admin
+            - SINGLE_USER_CREDENTIALS_PASSWORD=S3curePa55word
+            - NIFI_SENSITIVE_PROPS_KEY=pUaEVgyGKT61fMCAWNbjJPMwAcQDuDj4
+        # volumes:
+            # - './src/nifi/conf:/opt/nifi/nifi-current/conf'
         ports:
             - '8080:8080'
         networks:
