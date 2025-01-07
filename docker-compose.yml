@@ -3,8 +3,8 @@ version: '3.8'
 services:
     nifi:
         image: 'apache/nifi:1.24.0'
-        container_name: nifi_test
-        hostname: nifi_test
+        container_name: nifi_bd
+        hostname: nifi_bd
         environment:
             - NIFI_WEB_HTTP_PORT=8080
         volumes:
@@ -16,8 +16,8 @@ services:
 
     zookeeper:
         image: wurstmeister/zookeeper:latest
-        container_name: zookeeper_test
-        hostname: zookeeper_test
+        container_name: zookeeper_bd
+        hostname: zookeeper_bd
         environment:
             ZOOKEEPER_CLIENT_PORT: 2181
             ZOOKEEPER_TICK_TIME: 2000
@@ -28,16 +28,16 @@ services:
 
     kafka:
         image: wurstmeister/kafka:latest
-        container_name: kafka_test
-        hostname: kafka_test
+        container_name: kafka_bd
+        hostname: kafka_bd
         depends_on:
             - zookeeper
         environment:
-            KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka_test:9093,OUTSIDE://localhost:9092
+            KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka_bd:9093,OUTSIDE://localhost:9092
             KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
             KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
             KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-            KAFKA_ZOOKEEPER_CONNECT: zookeeper_test:2181
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper_bd:2181
             KAFKA_CREATE_TOPICS: "my-topic:1:1"
         ports:
             - '9092:9092'
@@ -48,8 +48,8 @@ services:
 
     spark-structured-streaming:
         image: docker.io/bitnami/spark:3
-        container_name: spark-structured-streaming-master
-        hostname: spark-structured-streaming-master
+        container_name: spark_structured_streaming_master_bd
+        hostname: spark_structured_streaming_master_bd
         user: root
         environment:
             - SPARK_MODE=master
@@ -66,8 +66,8 @@ services:
 
     hdfs-namenode:
         image: gradiant/hdfs-namenode
-        container_name: hdfs-namenode
-        hostname: hdfs-namenode
+        container_name: hdfs_namenode_bd
+        hostname: hdfs_namenode_bd
         ports:
             - '50070:50070'  # NameNode web UI
             - '8020:8020'    # HDFS RPC port
@@ -76,8 +76,8 @@ services:
 
     hdfs-datanode1:
         image: gradiant/hdfs-datanode
-        container_name: hdfs-datanode1
-        hostname: hdfs-datanode1
+        container_name: hdfs_datanode1_bd
+        hostname: hdfs_datanode1_bd
         links:
             - hdfs-namenode
         environment:
@@ -87,8 +87,8 @@ services:
 
     hdfs-datanode2:
         image: gradiant/hdfs-datanode
-        container_name: hdfs-datanode2
-        hostname: hdfs-datanode2
+        container_name: hdfs_datanode2_bd
+        hostname: hdfs_datanode2_bd
         links:
             - hdfs-namenode
         environment:
@@ -98,8 +98,8 @@ services:
 
     redis:
         image: redis
-        container_name: redis_test
-        hostname: redis_test
+        container_name: redis_bd
+        hostname: redis_bd
         ports:
             - '6379:6379'
         networks:
