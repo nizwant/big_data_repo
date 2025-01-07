@@ -45,25 +45,24 @@ services:
             - "9093"
         networks:
             - big-data-network
-            
-    # spark:
-    #     image: bitnami/spark:3.3.0
-    #     container_name: spark_test
-    #     hostname: spark_test
-    #     environment:
-    #         - SPARK_MODE=master    # Single-node, Spark in master mode
-    #         - SPARK_MASTER_URL=spark://spark_test:7077  # Local Spark master
-    #         - SPARK_DRIVER_MEMORY=2g
-    #         - SPARK_EXECUTOR_MEMORY=2g
-    #         - SPARK_EXECUTOR_CORES=2
-    #     ports:
-    #         - "4040:4040"   # Spark UI port for monitoring
-    #         - "7077:7077"   # Spark master port
-    #     volumes:
-    #         - ./spark:/opt/spark  # Local Spark directory for your code and configurations
-    #     networks:
-    #         - big-data-network
-    #     command: ["start-master.sh", "start-worker.sh", "spark://spark_test:7077"]
+
+    spark-structured-streaming:
+        image: docker.io/bitnami/spark:3
+        container_name: spark-structured-streaming-master
+        hostname: spark-structured-streaming-master
+        user: root
+        environment:
+            - SPARK_MODE=master
+            - SPARK_RPC_AUTHENTICATION_ENABLED=no
+            - SPARK_RPC_ENCRYPTION_ENABLED=no
+            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+            - SPARK_SSL_ENABLED=no
+        ports:
+            - '8081:8080'
+        volumes:
+            - ../streamingProje:/home
+        networks:
+            - big-data-network
 
     hdfs-namenode:
         image: gradiant/hdfs-namenode
@@ -105,6 +104,25 @@ services:
             - '6379:6379'
         networks:
             - big-data-network
+ 
+    # spark:
+    #     image: bitnami/spark:3.3.0
+    #     container_name: spark_test
+    #     hostname: spark_test
+    #     environment:
+    #         - SPARK_MODE=master    # Single-node, Spark in master mode
+    #         - SPARK_MASTER_URL=spark://spark_test:7077  # Local Spark master
+    #         - SPARK_DRIVER_MEMORY=2g
+    #         - SPARK_EXECUTOR_MEMORY=2g
+    #         - SPARK_EXECUTOR_CORES=2
+    #     ports:
+    #         - "4040:4040"   # Spark UI port for monitoring
+    #         - "7077:7077"   # Spark master port
+    #     volumes:
+    #         - ./spark:/opt/spark  # Local Spark directory for your code and configurations
+    #     networks:
+    #         - big-data-network
+    #     command: ["start-master.sh", "start-worker.sh", "spark://spark_test:7077"]
 
 
 networks:
