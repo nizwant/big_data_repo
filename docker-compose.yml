@@ -10,8 +10,8 @@ services:
             - SINGLE_USER_CREDENTIALS_USERNAME=admin
             - SINGLE_USER_CREDENTIALS_PASSWORD=S3curePa55word
             - NIFI_SENSITIVE_PROPS_KEY=pUaEVgyGKT61fMCAWNbjJPMwAcQDuDj4
-        # volumes:
-            # - './src/nifi/conf:/opt/nifi/nifi-current/conf'
+        volumes:
+            - './src/nifi/conf:/opt/nifi/nifi-current/conf'
         ports:
             - '8080:8080'
         networks:

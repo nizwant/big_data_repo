@@ -2,3 +2,4 @@
 src/api_key.py
 *.pyc
 venv
+src/nifi/conf/archive
