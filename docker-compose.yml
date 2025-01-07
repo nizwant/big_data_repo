@@ -9,6 +9,7 @@ services:
             - NIFI_WEB_HTTP_PORT=8080
         volumes:
             - '~/document/Nifi/shared-directory:/opt/nifi/nifi-current/ls-target'
+            - './src/nifi:/tmp/files'
         ports:
             - '8080:8080'
         networks:
@@ -66,8 +67,8 @@ services:
 
     hdfs-namenode:
         image: gradiant/hdfs-namenode
-        container_name: hdfs_namenode_bd
-        hostname: hdfs_namenode_bd
+        container_name: hdfs-namenode
+        hostname: hdfs-namenode
         ports:
             - '50070:50070'  # NameNode web UI
             - '8020:8020'    # HDFS RPC port
@@ -76,8 +77,8 @@ services:
 
     hdfs-datanode1:
         image: gradiant/hdfs-datanode
-        container_name: hdfs_datanode1_bd
-        hostname: hdfs_datanode1_bd
+        container_name: hdfs-datanode1
+        hostname: hdfs-datanode1
         links:
             - hdfs-namenode
         environment:
@@ -87,8 +88,8 @@ services:
 
     hdfs-datanode2:
         image: gradiant/hdfs-datanode
-        container_name: hdfs_datanode2_bd
-        hostname: hdfs_datanode2_bd
+        container_name: hdfs-datanode2
+        hostname: hdfs-datanode2
         links:
             - hdfs-namenode
         environment:
