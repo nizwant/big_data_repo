@@ -4,3 +4,4 @@ src/api_key.py
 venv
 src/nifi/conf/archive
 src/nifi/conf/login-identity-providers.xml
+.env

@@ -10,6 +10,8 @@ services:
             - SINGLE_USER_CREDENTIALS_USERNAME=admin
             - SINGLE_USER_CREDENTIALS_PASSWORD=S3curePa55word
             - NIFI_SENSITIVE_PROPS_KEY=pUaEVgyGKT61fMCAWNbjJPMwAcQDuDj4
+            - WARSAW_API_KEY=${WARSAW_API_KEY}
+            - WEATHER_API_KEY=${WEATHER_API_KEY}
         volumes:
             - './src/nifi/conf:/opt/nifi/nifi-current/conf'
         ports:
