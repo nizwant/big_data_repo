@@ -15,7 +15,7 @@ services:
         volumes:
             - './src/nifi/conf:/opt/nifi/nifi-current/conf'
         ports:
-            - '8080:8080'
+            - '8080:8080' # Nifi web UI
         networks:
             - big-data-network
 
@@ -63,7 +63,7 @@ services:
             - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
             - SPARK_SSL_ENABLED=no
         ports:
-            - '8081:8080'
+            - '8081:8080' # Spark web UI
         volumes:
             - ./src/spark:/home
         networks:
