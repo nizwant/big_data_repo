@@ -41,7 +41,7 @@ parsed_df = kafka_df.select(from_json(col("json_string"), StructType([StructFiel
 flattened_df = parsed_df.select(explode(col("data.result")).alias("data")).select("data.*")
 
 
-query = flattened_df.writeStream \
+query_hdfs = flattened_df.writeStream \
     .outputMode("append") \
     .format("parquet") \
     .option("path", "hdfs://hdfs-namenode:8020/big_data/locations_test.parquet") \
@@ -49,4 +49,4 @@ query = flattened_df.writeStream \
     .option("checkpointLocation", "hdfs://hdfs-namenode:8020/big_data/checkpoint/") \
     .start()
 
-query.awaitTermination(15)
+query_hdfs.awaitTermination(15)
