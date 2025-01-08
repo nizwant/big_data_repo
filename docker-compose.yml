@@ -7,8 +7,13 @@ services:
         hostname: nifi_bd
         environment:
             - NIFI_WEB_HTTP_PORT=8080
+            - SINGLE_USER_CREDENTIALS_USERNAME=admin
+            - SINGLE_USER_CREDENTIALS_PASSWORD=S3curePa55word
+            - NIFI_SENSITIVE_PROPS_KEY=pUaEVgyGKT61fMCAWNbjJPMwAcQDuDj4
+            - WARSAW_API_KEY=${WARSAW_API_KEY}
+            - WEATHER_API_KEY=${WEATHER_API_KEY}
         volumes:
-            - '~/document/Nifi/shared-directory:/opt/nifi/nifi-current/ls-target'
+            - './src/nifi/conf:/opt/nifi/nifi-current/conf'
         ports:
             - '8080:8080'
         networks:
@@ -38,7 +43,7 @@ services:
             KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
             KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
             KAFKA_ZOOKEEPER_CONNECT: zookeeper_bd:2181
-            KAFKA_CREATE_TOPICS: "my-topic:1:1"
+            KAFKA_CREATE_TOPICS: "my-topic:1:1, transport-location:1:1, weather:1:1, stops:1:1"
         ports:
             - '9092:9092'
         expose:
@@ -60,14 +65,14 @@ services:
         ports:
             - '8081:8080'
         volumes:
-            - ../streamingProje:/home
+            - ./src/spark:/home
         networks:
             - big-data-network
 
     hdfs-namenode:
         image: gradiant/hdfs-namenode
-        container_name: hdfs_namenode_bd
-        hostname: hdfs_namenode_bd
+        container_name: hdfs-namenode
+        hostname: hdfs-namenode
         ports:
             - '50070:50070'  # NameNode web UI
             - '8020:8020'    # HDFS RPC port
@@ -76,8 +81,8 @@ services:
 
     hdfs-datanode1:
         image: gradiant/hdfs-datanode
-        container_name: hdfs_datanode1_bd
-        hostname: hdfs_datanode1_bd
+        container_name: hdfs-datanode1
+        hostname: hdfs-datanode1
         links:
             - hdfs-namenode
         environment:
@@ -87,8 +92,8 @@ services:
 
     hdfs-datanode2:
         image: gradiant/hdfs-datanode
-        container_name: hdfs_datanode2_bd
-        hostname: hdfs_datanode2_bd
+        container_name: hdfs-datanode2
+        hostname: hdfs-datanode2
         links:
             - hdfs-namenode
         environment:

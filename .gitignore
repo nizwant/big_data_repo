@@ -2,3 +2,6 @@
 src/api_key.py
 *.pyc
 venv
+src/nifi/conf/archive
+src/nifi/conf/login-identity-providers.xml
+.env
