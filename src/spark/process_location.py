@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, StringType, FloatType
+from pyspark.sql.functions import from_json, col, explode
+from pyspark.sql.types import StructType, StructField, StringType, FloatType, ArrayType
 
 
 # Create a Spark session
@@ -33,14 +33,17 @@ kafka_df = spark.readStream \
 # Kafka 'value' column contains the message as binary, so we need to cast it to string
 kafka_df = kafka_df.selectExpr("CAST(value AS STRING) as json_string")
 
-# Parse the JSON data using the schema
-parsed_df = kafka_df.select(from_json(col("json_string"), json_schema).alias("data")).select("data.*")
 
-# Print the data to the console
-query = parsed_df.writeStream \
+# Parse the JSON data using the schema, and extract the "result" array
+parsed_df = kafka_df.select(from_json(col("json_string"), StructType([StructField("result", ArrayType(json_schema))])).alias("data"))
+
+# Explode the "result" array into separate rows
+flattened_df = parsed_df.select(explode(col("data.result")).alias("data")).select("data.*")
+
+
+query = flattened_df.writeStream \
     .outputMode("append") \
     .format("console") \
     .start()
 
-# Wait for the termination (with timeout to avoid blocking)
-# query.awaitTermination(20) 
+query.awaitTermination(15)
