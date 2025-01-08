@@ -43,7 +43,10 @@ flattened_df = parsed_df.select(explode(col("data.result")).alias("data")).selec
 
 query = flattened_df.writeStream \
     .outputMode("append") \
-    .format("console") \
+    .format("parquet") \
+    .option("path", "hdfs://hdfs-namenode:8020/big_data/locations_test.parquet") \
+    .option("compression", "snappy") \
+    .option("checkpointLocation", "hdfs://hdfs-namenode:8020/big_data/checkpoint/") \
     .start()
 
 query.awaitTermination(15)
