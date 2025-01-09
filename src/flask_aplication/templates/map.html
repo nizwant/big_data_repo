@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive map of public transport in Warsaw</title>
-
+    <meta http-equiv="refresh" content="10">
+    
     <!-- Leaflet.js CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     
@@ -40,6 +41,32 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
+        // Save the current map state (center and zoom) to localStorage
+        function saveMapState() {
+            var mapState = {
+                center: map.getCenter(),
+                zoom: map.getZoom()
+            };
+            localStorage.setItem('mapState', JSON.stringify(mapState));
+        }
+
+        // Restore the map state from localStorage
+        function restoreMapState() {
+            var savedState = localStorage.getItem('mapState');
+            if (savedState) {
+                var mapState = JSON.parse(savedState);
+                map.setView(mapState.center, mapState.zoom);
+            }
+        }
+
+        // Call restoreMapState after the page reload
+        restoreMapState();
+
+        // Add event listener to save the map state when the page is about to unload
+        window.onbeforeunload = function () {
+            saveMapState();
+        };
 
         // Data passed from Flask (locations with Latitude, Longitude, Label)
         var stops_locations = {{ stops_locations | tojson }};  // Flask's tojson filter to pass the data as a JS object
