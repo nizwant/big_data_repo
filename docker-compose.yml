@@ -101,34 +101,16 @@ services:
         networks:
             - big-data-network
 
-    redis:
-        image: redis
-        container_name: redis_bd
-        hostname: redis_bd
+    flask-app:
+        build:
+            context: ./src/flask_application  # Path to the directory where Dockerfile is located
+            dockerfile: Dockerfile           # Optionally specify Dockerfile name (defaults to "Dockerfile")
+        container_name: flask-app
+        hostname: flask-app
         ports:
-            - '6379:6379'
+            - "5000:5000"
         networks:
             - big-data-network
- 
-    # spark:
-    #     image: bitnami/spark:3.3.0
-    #     container_name: spark_test
-    #     hostname: spark_test
-    #     environment:
-    #         - SPARK_MODE=master    # Single-node, Spark in master mode
-    #         - SPARK_MASTER_URL=spark://spark_test:7077  # Local Spark master
-    #         - SPARK_DRIVER_MEMORY=2g
-    #         - SPARK_EXECUTOR_MEMORY=2g
-    #         - SPARK_EXECUTOR_CORES=2
-    #     ports:
-    #         - "4040:4040"   # Spark UI port for monitoring
-    #         - "7077:7077"   # Spark master port
-    #     volumes:
-    #         - ./spark:/opt/spark  # Local Spark directory for your code and configurations
-    #     networks:
-    #         - big-data-network
-    #     command: ["start-master.sh", "start-worker.sh", "spark://spark_test:7077"]
-
 
 networks:
     big-data-network:
