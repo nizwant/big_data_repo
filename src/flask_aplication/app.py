@@ -7,22 +7,23 @@ from api_key import api_key
 app = Flask(__name__)
 
 # Fetch current vehicles locations 
-url = "https://api.um.warszawa.pl/api/action/busestrams_get"
-params = {
-    "resource_id": "f2e5503e-927d-4ad3-9500-4ab9e55deb59",  # resource id given by the API
-    "apikey": api_key,
-    "type": 1,  # 1 - bus, 2 - tram
-}
-locations = requests.get(url, params=params)
-locations_df = pd.json_normalize(locations.json()["result"])
-locations_df.rename(columns={"Lat": "Latitude", "Lon": "Longitude"}, inplace=True)
-locations_df["Label"] = locations_df["Lines"].astype(str) + "/" + locations_df["Brigade"].astype(str)
-locations_df["Latitude"] = locations_df["Latitude"].astype(str)
-locations_df["Longitude"] = locations_df["Longitude"].astype(str)
-locations_df['Time'] = pd.to_datetime(locations_df['Time'])
-current_time = datetime.now()
-time_diff = current_time - locations_df['Time']
-locations_df = locations_df[time_diff <= pd.Timedelta(seconds=30)]
+def fetch_vehicle_locations():
+    url = "https://api.um.warszawa.pl/api/action/busestrams_get"
+    params = {
+        "resource_id": "f2e5503e-927d-4ad3-9500-4ab9e55deb59",  # resource id given by the API
+        "apikey": api_key,
+        "type": 1,  # 1 - bus, 2 - tram
+    }
+    locations = requests.get(url, params=params)
+    locations_df = pd.json_normalize(locations.json()["result"])
+    locations_df.rename(columns={"Lat": "Latitude", "Lon": "Longitude"}, inplace=True)
+    locations_df["Label"] = locations_df["Lines"].astype(str) + "/" + locations_df["Brigade"].astype(str)
+    locations_df["Latitude"] = locations_df["Latitude"].astype(str)
+    locations_df["Longitude"] = locations_df["Longitude"].astype(str)
+    locations_df['Time'] = pd.to_datetime(locations_df['Time'])
+    time_diff = datetime.now() - locations_df['Time']
+    locations_df = locations_df[time_diff <= pd.Timedelta(seconds=30)]
+    return locations_df
 
 # Fetch routes from the API
 url_routes = "https://api.um.warszawa.pl/api/action/public_transport_routes"
@@ -69,6 +70,7 @@ def index():
     stops_for_line = stops_for_line.drop(columns=["odleglosc", "ulica_id", "typ"]).drop_duplicates()
     stops_for_line = pd.merge(stops_for_line, stops_df, left_on=["nr_zespolu", "nr_przystanku"], right_on=["zespol", "slupek"], how="left")
 
+    locations_df = fetch_vehicle_locations()
     locations_for_line = locations_df[locations_df["Lines"] == selected_route]
     
     # Convert to dictionary for template
