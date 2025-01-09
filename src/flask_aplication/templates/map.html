@@ -16,6 +16,17 @@
 </head>
 <body>
     <h1>Interactive Map of Warsaw</h1>
+
+    <!-- Dropdown to choose route number -->
+    <form method="get" action="/">
+        <label for="route">Select Route:</label>
+        <select name="route" id="route" onchange="this.form.submit()">
+            {% for route in routes %}
+                <option value="{{ route }}" {% if route == selected_route %}selected{% endif %}>{{ route }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
     <div id="map"></div>
 
     <!-- Leaflet.js JavaScript -->
@@ -25,7 +36,7 @@
         // Initialize the map and set the initial view to Warsaw
         var map = L.map('map').setView([52.2298, 21.0118], 13); // Warsaw coordinates
 
-        // Add OpenStreetMap tile layer (you can choose another provider)
+        // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
@@ -33,7 +44,7 @@
         // Data passed from Flask (locations with Latitude, Longitude, Label)
         var locations = {{ locations | tojson }};  // Flask's tojson filter to pass the data as a JS object
 
-        // Loop through the locations and create markers on the map
+        // Loop through the locations and create green circles on the map
         locations.forEach(function(location) {
             var lat = location.Latitude;
             var lon = location.Longitude;
