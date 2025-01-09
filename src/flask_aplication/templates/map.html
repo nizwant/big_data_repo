@@ -42,20 +42,41 @@
         }).addTo(map);
 
         // Data passed from Flask (locations with Latitude, Longitude, Label)
-        var locations = {{ locations | tojson }};  // Flask's tojson filter to pass the data as a JS object
+        var stops_locations = {{ stops_locations | tojson }};  // Flask's tojson filter to pass the data as a JS object
 
         // Loop through the locations and create green circles on the map
-        locations.forEach(function(location) {
-            var lat = location.Latitude;
-            var lon = location.Longitude;
-            var label = location.Label;
+        stops_locations.forEach(function(stop_location) {
+            var lat = stop_location.Latitude;
+            var lon = stop_location.Longitude;
+            var label = stop_location.Label;
 
             // Add a green circle to the map
             var circle = L.circle([lat, lon], {
                 color: 'green',           // Set the border color to green
                 fillColor: 'green',       // Set the fill color to green
                 fillOpacity: 0.9,         // Set fill opacity
-                radius: 15               // Set the radius in meters
+                radius: 20               // Set the radius in meters
+            }).addTo(map);
+
+            // Bind a popup with the label to the circle
+            circle.bindPopup(label);
+        });
+
+
+        // Data passed from Flask (locations with Latitude, Longitude, Label)
+        var vehicle_locations = {{ vehicle_locations | tojson }};  // Flask's tojson filter to pass the data as a JS object
+
+        // Loop through the locations and create green circles on the map
+        vehicle_locations.forEach(function(vehicle_location) {
+            var lat = vehicle_location.Latitude;
+            var lon = vehicle_location.Longitude;
+            var label = vehicle_location.Label;
+
+            var circle = L.circleMarker([lat, lon], {
+                color: 'black',         
+                fillColor: 'black',      
+                fillOpacity: 0.9,        
+                radius: 15               
             }).addTo(map);
 
             // Bind a popup with the label to the circle
