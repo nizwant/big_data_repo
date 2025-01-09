@@ -7,13 +7,10 @@
 
     <!-- Leaflet.js CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
-    <!-- Optional: Include Leaflet Draw for drawing on the map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
     
     <style>
         #map {
-            height: 600px;
+            height: 1000px;
         }
     </style>
 </head>
@@ -24,9 +21,6 @@
     <!-- Leaflet.js JavaScript -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     
-    <!-- Optional: Leaflet Draw JavaScript (for drawing markers) -->
-    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-    
     <script>
         // Initialize the map and set the initial view to Warsaw
         var map = L.map('map').setView([52.2298, 21.0118], 13); // Warsaw coordinates
@@ -36,29 +30,25 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Enable drawing on the map (optional - for drawing markers)
-        var drawnItems = new L.FeatureGroup();
-        map.addLayer(drawnItems);
+        // Data passed from Flask (locations with Latitude, Longitude, Label)
+        var locations = {{ locations | tojson }};  // Flask's tojson filter to pass the data as a JS object
 
-        var drawControl = new L.Control.Draw({
-            edit: {
-                featureGroup: drawnItems
-            },
-            draw: {
-                marker: true,
-                polygon: false,
-                polyline: false,
-                circle: false,
-                rectangle: false
-            }
-        });
-        map.addControl(drawControl);
+        // Loop through the locations and create markers on the map
+        locations.forEach(function(location) {
+            var lat = location.Latitude;
+            var lon = location.Longitude;
+            var label = location.Label;
 
-        // Event handler for creating markers
-        map.on('draw:created', function (e) {
-            var layer = e.layer;
-            drawnItems.addLayer(layer);
-            console.log("Marker drawn at: ", layer.getLatLng());  // Output marker coordinates
+            // Add a green circle to the map
+            var circle = L.circle([lat, lon], {
+                color: 'green',           // Set the border color to green
+                fillColor: 'green',       // Set the fill color to green
+                fillOpacity: 0.9,         // Set fill opacity
+                radius: 15               // Set the radius in meters
+            }).addTo(map);
+
+            // Bind a popup with the label to the circle
+            circle.bindPopup(label);
         });
     </script>
 </body>
