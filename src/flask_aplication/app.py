@@ -13,6 +13,14 @@ params_routes = {
 routes_response = requests.get(url_routes, params=params_routes)
 routes = routes_response.json()["result"]
 
+# Sort routes: First numeric routes in ascending order, then non-numeric routes alphabetically
+def sort_routes(route_dict):
+    numeric_routes = sorted([route for route in route_dict.keys() if route.isdigit()], key=int)
+    alphanumeric_routes = sorted([route for route in route_dict.keys() if not route.isdigit()])
+    return numeric_routes + alphanumeric_routes
+
+sorted_routes = sort_routes(routes)
+
 # Fetch stops data
 url_stops = "https://api.um.warszawa.pl/api/action/dbstore_get"
 params_stops = {
@@ -45,7 +53,7 @@ def index():
     # Convert to dictionary for template
     locations = stops_for_line.to_dict(orient='records')
 
-    return render_template('map.html', locations=locations, routes=routes.keys(), selected_route=selected_route)
+    return render_template('map.html', locations=locations, routes=sorted_routes, selected_route=selected_route)
 
 if __name__ == '__main__':
     app.run(debug=True)
