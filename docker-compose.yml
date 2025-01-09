@@ -101,18 +101,18 @@ services:
         networks:
             - big-data-network
 
-    # flask-app:
-    #     build:
-    #         context: ./src/flask_application 
-    #         dockerfile: Dockerfile        
-    #     container_name: flask-app
-    #     hostname: flask-app
-    #     ports:
-    #         - "5000:5000"
-    #     networks:
-    #         - big-data-network
-    #     depends_on:
-    #         - nifi
+    flask-app:
+        build:
+            context: ./src/flask_application 
+            dockerfile: Dockerfile        
+        container_name: flask-app
+        hostname: flask-app
+        ports:
+            - "5000:5000"
+        networks:
+            - big-data-network
+        depends_on:
+            - kafka
 
 networks:
     big-data-network:

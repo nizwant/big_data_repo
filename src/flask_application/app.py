@@ -14,9 +14,9 @@ last_known_message = None
 # Kafka Consumer Setup
 def create_kafka_consumer():
     consumer = Consumer({
-        'bootstrap.servers': 'localhost:9092',  # Kafka server
+        'bootstrap.servers': 'kafka_bd:9093',  # Kafka server
         'group.id': 'flask-app-group',
-        'auto.offset.reset': 'latest',  # Always read the latest message when the consumer starts
+        'auto.offset.reset': 'earliest',  # Always read the latest message when the consumer starts
     })
     consumer.subscribe(['transport-location'])  # Subscribe to the topic
     return consumer
