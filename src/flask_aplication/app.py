@@ -56,4 +56,4 @@ def index():
     return render_template('map.html', locations=locations, routes=sorted_routes, selected_route=selected_route)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
