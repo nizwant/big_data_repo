@@ -13,7 +13,11 @@ parsing date from string to datetime64 increases the size of the data by 1.3MB
 need to check it further
 
 
+
+
 spark-submit --master local[*] /home/read_location.py
 
 docker exec hdfs-namenode hadoop fs -chown root /
 docker exec spark_structured_streaming_master_bd spark-submit --master local[*] --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.0 /home/process_location.py
+
+kafka-topics.sh --bootstrap-server kafka_bd:9093 --list
