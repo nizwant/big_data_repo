@@ -5,4 +5,4 @@ venv
 src/nifi/conf/archive
 src/nifi/conf/login-identity-providers.xml
 .env
-src/flask_aplication/api_key.py
+src/flask_application/api_key.py
