@@ -49,4 +49,4 @@ query_hdfs = flattened_df.writeStream \
     .option("checkpointLocation", "hdfs://hdfs-namenode:8020/big_data/checkpoint/") \
     .start()
 
-query_hdfs.awaitTermination(15)
+query_hdfs.awaitTermination()
